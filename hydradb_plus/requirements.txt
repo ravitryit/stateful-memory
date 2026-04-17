@@ -1,0 +1,12 @@
+networkx==3.4.2
+chromadb==1.5.7
+litellm==1.83.8
+sentence-transformers==5.4.1
+vaderSentiment==3.3.2
+transformers==4.35.0
+torch==2.1.0
+streamlit==1.56.0
+plotly==6.7.0
+pytest==9.0.3
+python-dotenv==1.2.2
+rich==15.0.0

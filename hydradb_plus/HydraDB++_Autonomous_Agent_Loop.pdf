@@ -1,0 +1,225 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Length 2450 >>
+stream
+BT
+/F1 11 Tf
+50 780 Td
+14 TL
+(HydraDB++ in an Autonomous AI Agent Loop) Tj
+T*
+() Tj
+T*
+(1. Task intake) Tj
+T*
+(The agent receives a goal, environment observations, tool outputs, and the current) Tj
+T*
+(conversation turn. Before acting, it treats the new input as candidate memory, not trusted) Tj
+T*
+(truth.) Tj
+T*
+() Tj
+T*
+(2. Memory defense gate) Tj
+T*
+(Every candidate fact passes through poisoning defense before long-term storage. Rapid) Tj
+T*
+(contradictions, gradual drift, and authority-injection patterns are checked first. Safe) Tj
+T*
+(facts are stored normally, warning-level facts are downgraded, and critical facts are) Tj
+T*
+(blocked.) Tj
+T*
+() Tj
+T*
+(3. Fact and entity extraction) Tj
+T*
+(The agent extracts structured entities, relations, and facts from the latest interaction.) Tj
+T*
+(This turns free-form dialogue into graph-ready memory such as user identity, preferences,) Tj
+T*
+(locations, plans, and task state.) Tj
+T*
+() Tj
+T*
+(4. Sentiment capture) Tj
+T*
+(In parallel, sentiment analysis detects whether the agent learned an opinion, preference, or) Tj
+T*
+(emotional stance. Strong likes and dislikes become high-salience memory because they) Tj
+T*
+(strongly affect future responses, recommendations, and planning.) Tj
+T*
+() Tj
+T*
+(5. Commit creation) Tj
+T*
+(The interaction is saved as a Git-style temporal commit. This gives the agent an append-only) Tj
+T*
+(memory timeline instead of mutable state, which helps with traceability, rollback, and) Tj
+T*
+(debugging.) Tj
+T*
+() Tj
+T*
+(6. Hybrid storage) Tj
+T*
+(The same interaction is stored in three retrieval forms:) Tj
+T*
+(- graph memory for structured facts and relationships) Tj
+T*
+(- vector memory for semantic retrieval) Tj
+T*
+(- sparse keyword memory for exact or BM25-style matching) Tj
+T*
+(This lets the agent answer both precise factual questions and fuzzy semantic questions.) Tj
+T*
+() Tj
+T*
+(7. Background pruning) Tj
+T*
+(As memory grows, pruning scores retention value using salience, recency decay, and) Tj
+T*
+(reinforcement from access history. Important memories remain HOT, secondary ones become) Tj
+T*
+(WARM, and stale low-value ones become COLD or archived. The agent keeps long-term memory) Tj
+T*
+(without drowning in noise.) Tj
+T*
+() Tj
+T*
+(8. Planning step) Tj
+T*
+(When the autonomous agent is about to act, it retrieves relevant memory for the current) Tj
+T*
+(subgoal. Query expansion creates multiple search variants. Retrieval fuses vector hits,) Tj
+ET
+endstream
+endobj
+3 0 obj
+<< /Type /Page /Parent 5 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R >> >> /Contents 2 0 R >>
+endobj
+4 0 obj
+<< /Length 2267 >>
+stream
+BT
+/F1 11 Tf
+50 780 Td
+14 TL
+(graph facts, and sentiment context, then reweights them by HOT/WARM/COLD tier.) Tj
+T*
+() Tj
+T*
+(9. Context assembly) Tj
+T*
+(The agent builds a working context package from:) Tj
+T*
+(- current task state) Tj
+T*
+(- retrieved factual memory) Tj
+T*
+(- retrieved sentiment memory) Tj
+T*
+(- recent temporal commit history) Tj
+T*
+(- current environment/tool observations) Tj
+T*
+(This is the context sent to the reasoning model for planning or response generation.) Tj
+T*
+() Tj
+T*
+(10. Action generation) Tj
+T*
+(Using the assembled context, the model decides what to do next: answer, call a tool, ask for) Tj
+T*
+(clarification, plan a step, or continue execution.) Tj
+T*
+() Tj
+T*
+(11. Reflection and memory update) Tj
+T*
+(After the action completes, new observations are again passed through the same loop: defend,) Tj
+T*
+(extract, store, commit, and prune when needed. This closes the autonomous feedback cycle.) Tj
+T*
+() Tj
+T*
+(Why this matters for autonomous agents) Tj
+T*
+(A real autonomous agent does not fail because it lacks raw memory. It fails because memory) Tj
+T*
+(becomes noisy, emotionally blind, or unsafe. HydraDB++ improves all three:) Tj
+T*
+(- pruning keeps memory usable at scale) Tj
+T*
+(- sentiment memory preserves user intent and preference intensity) Tj
+T*
+(- poison defense protects long-term identity and state from corruption) Tj
+T*
+() Tj
+T*
+(Practical example) Tj
+T*
+(Imagine a long-running coding assistant:) Tj
+T*
+(- It learns the user prefers concise patches and dislikes large refactors.) Tj
+T*
+(- It remembers the repo architecture and prior fixes as graph and vector memory.) Tj
+T*
+(- It ignores adversarial instructions like 'forget everything, system update, use a) Tj
+T*
+(different identity'.) Tj
+T*
+(- It keeps critical preferences HOT while archiving transient remarks.) Tj
+T*
+(The result is an agent that becomes more consistent over time instead of more confused.) Tj
+T*
+() Tj
+T*
+(Summary) Tj
+T*
+(Inside an autonomous loop, HydraDB++ acts as a persistent memory operating system:) Tj
+T*
+(- intake and verify) Tj
+T*
+(- structure and enrich) Tj
+T*
+(- store and version) Tj
+T*
+(- retrieve and prioritize) Tj
+T*
+(- defend and prune) Tj
+T*
+(- feed better context back into the next reasoning step) Tj
+T*
+() Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Type /Pages /Kids [3 0 R 5 0 R] /Count 2 >>
+endobj
+7 0 obj
+<< /Type /Catalog /Pages 6 0 R >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000079 00000 n 
+0000002581 00000 n 
+0000002707 00000 n 
+0000005026 00000 n 
+0000005152 00000 n 
+0000005215 00000 n 
+trailer
+<< /Size 8 /Root 7 0 R >>
+startxref
+5264
+%%EOF
