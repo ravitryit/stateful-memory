@@ -121,63 +121,8 @@ pytest
 
 ## Architecture Diagram
 
-```text
-                +-----------------------+
-                |   CLI / Agent Input   |
-                +-----------+-----------+
-                            |
-                            v
-                +-----------------------+
-                |   Integrity Engine    |
-                |  - contradiction      |
-                |  - drift detection    |
-                |  - authority checks   |
-                +-----------+-----------+
-                            |
-                            v
-                +-----------------------+
-                | Extraction Pipeline   |
-                |  - LLM / Fallback     |
-                |  - Entities           |
-                |  - Relations          |
-                |  - Facts              |
-                +-----+-----------+-----+
-                      |           |
-          +-----------+           +-------------------+
-          v                                           v
-+-----------------------+                 +-----------------------+
-| Knowledge Graph       |                 | Sentiment Engine      |
-| - append-only edges   |                 | - intensity scoring   |
-| - temporal history    |                 | - opinion tracking    |
-| - current truth       |                 | - feeling mapping     |
-+-----------+-----------+                 +-----------+-----------+
-            |                                           |
-            +-------------------+-----------------------+
-                                |
-                                v
-                    +-----------------------+
-                    | Memory Store          |
-                    | - raw embeddings      |
-                    | - enriched context    |
-                    | - sparse keywords     |
-                    +-----------+-----------+
-                                |
-                                v
-                    +-----------------------+
-                    | Temporal Engine       |
-                    | - version control     |
-                    | - session history     |
-                    | - snapshots           |
-                    +-----------+-----------+
-                                |
-                                v
-                    +-----------------------+
-                    | Memory Optimizer      |
-                    | - tiering logic       |
-                    | - HOT/WARM/COLD       |
-                    | - retention policy    |
-                    +-----------------------+
-```
+<img width="586" height="1568" alt="image" src="https://github.com/user-attachments/assets/608e96c9-1e6d-44d0-9e33-4987226ed433" />
+
 
 ## Performance & Validation
 
