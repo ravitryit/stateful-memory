@@ -1,0 +1,7 @@
+Session: session-1
+Entities: ['session-1', 'name', 'ravi', 'location', 'guntur']
+Facts: ['session-1 HAS_NAME ravi', 'session-1 LIVES_IN guntur']
+Relations: [{'from_entity': 'session-1', 'to_entity': 'name', 'relation': 'HAS_NAME', 'value': 'ravi'}, {'from_entity': 'session-1', 'to_entity': 'location', 'relation': 'LIVES_IN', 'value': 'guntur'}]
+
+Original text:
+"my name is ravi,i live in guntur"ÿÿÿ
