@@ -136,7 +136,7 @@ Run the benchmark suite locally to generate the performance metrics for your spe
 ## Project Structure
 
 ```text
-hydradb_plus/
+hydra_plus/
 ├── core/           # Graph and Memory engines
 ├── contributions/  # Modular extensions (Pruning, Sentiment, Defense)
 ├── pipeline/       # Unified ingestion and query logic
@@ -145,16 +145,4 @@ hydradb_plus/
 └── demo/           # CLI interfaces
 ```
 
-## Contributing
-
-Contributions are welcome for:
-- Stronger entity and relation extraction models
-- Improved data integrity heuristics
-- Expanded sentiment evaluation sets
-- Production persistence and scaling
-
-Suggested workflow:
-1. Create a feature branch.
-2. Add or update tests.
-3. Run `pytest`.
-4. Submit a PR with a design summary.
+Thank you!
