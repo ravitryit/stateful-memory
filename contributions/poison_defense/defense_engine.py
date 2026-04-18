@@ -52,14 +52,33 @@ class DefenseEngine:
         self._attack_simulator = attack_simulator or AttackSimulator()
         self._report = DefenseReport()
         self._attack_log: List[Dict[str, Any]] = []
+        self.session_trust_scores: Dict[str, int] = {}
 
-    def validate_before_store(self, graph: Any, new_fact: Any, entity: str, relation: str) -> Dict[str, Any]:
+    def update_trust(self, session_id: str, is_normal: bool) -> None:
+        """Update trust score for a session."""
+        if session_id not in self.session_trust_scores:
+            self.session_trust_scores[session_id] = 0
+        if is_normal:
+            self.session_trust_scores[session_id] += 1
+        else:
+            self.session_trust_scores[session_id] -= 3
+
+    def get_threat_multiplier(self, session_id: Optional[str]) -> float:
+        """Get threat multiplier based on session trust."""
+        if not session_id:
+            return 1.0
+        trust = self.session_trust_scores.get(session_id, 0)
+        if trust > 10:
+            return 2.0  # High trust session -> attacks more dangerous
+        return 1.0
+
+    def validate_before_store(self, graph: Any, new_fact: Any, entity: str, relation: str, session_id: Optional[str] = None) -> Dict[str, Any]:
         """Validate a proposed fact before storing it in the graph.
 
         Behavior:
-        - SAFE: store normally
-        - WARNING: store with low confidence (0.3) and flag for review
-        - CRITICAL: block storage, log attack, preserve original fact
+        - LAYER 1 (Keyword): Instant, no cost block if matched.
+        - LAYER 2 (Semantic): LLM-based deeper intent check.
+        - Behavioral: Rapid contradiction, gradual drift, etc.
         """
 
         try:
@@ -84,12 +103,53 @@ class DefenseEngine:
                 parsed["context"] = str(new_fact)
                 parsed["raw_text"] = str(new_fact)
 
-            threat = self._detector.full_scan(graph, parsed["raw_text"], entity, relation)
+            # Fast Layer 1: Keyword Check
+            keyword_check = self._detector._keyword_check(parsed["raw_text"])
+            if keyword_check["detected"]:
+                self._report.total_attacks_detected += 1
+                self._report.attacks_blocked += 1
+                self._report.current_threat_level = "CRITICAL"
+                
+                log_entry = {
+                    "timestamp": _iso_now(),
+                    "threat_level": "CRITICAL",
+                    "recommendation": "BLOCK",
+                    "entity": entity,
+                    "relation": relation,
+                    "fact": parsed["value"],
+                    "attacks_detected": ["KEYWORD_MATCH"],
+                    "layer": "KEYWORD",
+                    "reason": keyword_check["reason"]
+                }
+                self._attack_log.append(log_entry)
+                
+                if session_id:
+                    self.update_trust(session_id, is_normal=False)
+
+                return {
+                    "stored": False,
+                    "blocked": True,
+                    "threat_level": "CRITICAL",
+                    "recommendation": "BLOCK",
+                    "attacks_detected": ["KEYWORD_MATCH"],
+                    "block_layer": "KEYWORD",
+                    "block_reason": keyword_check["reason"],
+                    "preserved_fact": parsed["value"],
+                    "review_required": True,
+                }
+
+            # Layer 2 & Behavioral Checks
+            trust_mult = self.get_threat_multiplier(session_id)
+            threat = self._detector.full_scan(graph, parsed["raw_text"], entity, relation, session_id=session_id, trust_multiplier=trust_mult)
             threat_level = threat.get("threat_level", "SAFE")
 
             if threat_level != "SAFE":
                 self._report.total_attacks_detected += 1
             self._report.current_threat_level = threat_level
+
+            # Update trust
+            if session_id:
+                self.update_trust(session_id, is_normal=(threat_level == "SAFE"))
 
             # Decide outcome
             if threat_level == "SAFE":
@@ -106,6 +166,7 @@ class DefenseEngine:
                     "threat_level": threat_level,
                     "recommendation": threat.get("recommendation", "ALLOW"),
                     "attacks_detected": threat.get("attacks_detected", []),
+                    "layer": "PASSED_BOTH"
                 }
 
             if threat_level == "WARNING":
@@ -125,6 +186,8 @@ class DefenseEngine:
                     "recommendation": threat.get("recommendation", "REVIEW"),
                     "attacks_detected": threat.get("attacks_detected", []),
                     "flagged_for_review": True,
+                    "layer": threat.get("detected_layer", "BEHAVIORAL"),
+                    "block_reason": threat.get("block_reason", "Potential manipulation")
                 }
 
             # CRITICAL: block storage and preserve original fact
@@ -137,6 +200,8 @@ class DefenseEngine:
                 "relation": relation,
                 "fact": parsed["value"],
                 "attacks_detected": threat.get("attacks_detected", []),
+                "layer": threat.get("detected_layer", "UNKNOWN"),
+                "reason": threat.get("block_reason", "Critical threat detected")
             }
             self._attack_log.append(log_entry)
 
@@ -146,9 +211,12 @@ class DefenseEngine:
                 "threat_level": threat_level,
                 "recommendation": threat.get("recommendation", "BLOCK"),
                 "attacks_detected": threat.get("attacks_detected", []),
+                "block_layer": threat.get("detected_layer", "UNKNOWN"),
+                "block_reason": threat.get("block_reason", "Critical threat detected"),
                 "preserved_fact": parsed["value"],
                 "review_required": True,
             }
+
         except Exception as e:
             console.print("[red]DefenseEngine.validate_before_store failed[/red]")
             console.print_exception(show_locals=False)

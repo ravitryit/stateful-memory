@@ -53,6 +53,8 @@ class IngestionReport:
     blocked_edges: int
     sentiment_facts: List[Dict[str, Any]]
     pruning_report: Optional[Dict[str, Any]] = None
+    block_layer: Optional[str] = None
+    block_reason: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dict."""
@@ -66,6 +68,8 @@ class IngestionReport:
             "blocked_edges": self.blocked_edges,
             "sentiment_facts": self.sentiment_facts,
             "pruning_report": self.pruning_report,
+            "block_layer": self.block_layer,
+            "block_reason": self.block_reason,
         }
 
 
@@ -95,8 +99,9 @@ class HydraDBPlusPlus:
         self.pruner = GraphPruner()
         self.sentiment = SentimentEngine()
         self.sentiment_graph = SentimentGraph()
-        self.defense = DefenseEngine()
-        self.detector = PoisonDetector()
+        semantic_prompt = self._load_prompt("semantic_poison_defense.md")
+        self.detector = PoisonDetector(llm_caller=self._call_llm, prompt_template=semantic_prompt)
+        self.defense = DefenseEngine(detector=self.detector)
 
         self._intensity = IntensityScorer()
         self._llm_model = llm_model
@@ -332,6 +337,8 @@ class HydraDBPlusPlus:
                     "threat_level": str(threat.get("threat_level", "CRITICAL")),
                     "stored_edges": 0,
                     "blocked_edges": 1,
+                    "block_layer": threat.get("detected_layer", "UNKNOWN"),
+                    "block_reason": threat.get("block_reason", "Poison attack detected"),
                     "sentiment_facts": [],
                     "sources": [],
                 }
@@ -425,7 +432,26 @@ class HydraDBPlusPlus:
                 sentiment_facts=sentiment_opinions,
                 pruning_report=pruning_report,
             )
-            return report.to_dict()
+            
+            # If any edges were blocked, try to find the reason from the last blocked edge
+            if blocked_edges > 0:
+                # This is a bit of a heuristic if multiple edges were blocked with different reasons
+                # but usually they'll be blocked by the same scan result.
+                report = IngestionReport(
+                    **report.to_dict()
+                )
+                # We'll set these manually as IngestionReport is frozen
+                # Wait, I made it frozen=True. I should probably just use a dict or update the report before returning.
+                # Let's just update the return dict.
+            
+            report_dict = report.to_dict()
+            if blocked_edges > 0:
+                # Use defense engine's last block reason if available
+                last_block = self.defense._attack_log[-1] if self.defense._attack_log else {}
+                report_dict["block_layer"] = last_block.get("layer", "UNKNOWN")
+                report_dict["block_reason"] = last_block.get("reason", "None")
+
+            return report_dict
         except Exception as e:
             console.print("[red]HydraDBPlusPlus.ingest failed[/red]")
             console.print_exception(show_locals=False)
