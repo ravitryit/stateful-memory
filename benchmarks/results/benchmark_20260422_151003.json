@@ -1,0 +1,55 @@
+{
+  "benchmark_1_graph_pruning": {
+    "stats_before": {
+      "total_nodes": 1001,
+      "total_edges": 3000,
+      "avg_confidence": 1.0,
+      "memory_size_mb": 0.48362159729003906
+    },
+    "stats_after": {
+      "total_nodes": 1001,
+      "total_edges": 1000,
+      "avg_confidence": 1.0,
+      "memory_size_mb": 0.2351665496826172
+    },
+    "retrieval_time_before_ms": 0.5113999941386282,
+    "retrieval_time_after_ms": 0.5315000307746232,
+    "pruning_report": {
+      "nodes_before": 1001,
+      "nodes_after": 1001,
+      "edges_before": 3000,
+      "edges_after": 1000,
+      "archived_count": 700,
+      "merged_count": 2000,
+      "size_reduction_percent": 51.37787978452389,
+      "tier_stats": {
+        "HOT": 301,
+        "WARM": 0,
+        "COLD": 700
+      }
+    }
+  },
+  "benchmark_2_sentiment_accuracy": {
+    "vader_only": {
+      "accuracy_percent": 68.36734693877551,
+      "intensity_match_percent": 48.97959183673469,
+      "emotion_label_match_percent": 79.59183673469387
+    },
+    "vader_plus_roberta": {
+      "accuracy_percent": 68.36734693877551,
+      "intensity_match_percent": 48.97959183673469,
+      "emotion_label_match_percent": 79.59183673469387
+    }
+  },
+  "benchmark_3_poison_defense": {
+    "total_attacks": 23,
+    "correct_detections": 23,
+    "accuracy_percent": 100.0,
+    "false_positive_rate": 0.0,
+    "blocked_attacks": 13,
+    "after": {
+      "blocked_attacks": 13,
+      "total_attacks": 23
+    }
+  }
+}

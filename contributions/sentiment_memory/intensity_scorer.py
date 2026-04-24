@@ -342,55 +342,111 @@ class IntensityScorer:
             return default_subject
         return subject
 
+    def _extract_subject_at_index(self, words, opinion_idx, opinion_word):
+        """Extract subject at the opinion word index with proper validation."""
+        
+        # Pattern 2: Subject BEFORE "is"
+        # "Next.js is my favorite framework"
+        #  ^subject^  ^opinion^
+        
+        lower_words = [w.lower().strip('.,!?"') for w in words]
+        
+        # Find "is" before opinion word
+        for i in range(opinion_idx):
+            if lower_words[i] == 'is':
+                # Subject = words before "is"
+                subject_words = words[:i]
+                if subject_words:
+                    subject = " ".join(subject_words)
+                    subject = subject.strip('.,!?"').lower()
+                    # Must be meaningful
+                    invalid = {"my", "i", "we", "the", "a", "an", "it", "this"}
+                    if subject and subject not in invalid:
+                        return subject
+        
+        # Pattern 1: Subject AFTER opinion word
+        stop_words = {
+            "using", "dealing", "working", "with",
+            "the", "a", "an", "for", "my", "i", "me",
+            "to", "of", "about", "really", "very",
+            "absolutely", "completely", "all"
+        }
+        
+        after = words[opinion_idx + 1:]
+        for w in after:
+            clean = w.strip('.,!?"').lower()
+            if clean not in stop_words and len(clean) > 1:
+                return clean  # First meaningful word only
+        
+        return "unknown"
+
+    def _extract_from_clause(self, clause: str) -> List[Dict[str, Any]]:
+        """Find all opinion statements in a clause and return structured facts."""
+        opinions = []
+        
+        # Opinion word mapping for intensity scoring
+        opinion_map = {
+            "love": 0.9, "enjoy": 0.6, "like": 0.5,
+            "prefer": 0.5, "preferred": 0.5, "favorite": 0.65, "hate": -0.9,
+            "dislike": -0.6, "despise": -0.9,
+            "frustrating": -0.65, "annoying": -0.6,
+            "best": 0.7, "worst": -0.8
+        }
+        
+        words = clause.lower().split()
+        
+        for i, word in enumerate(words):
+            clean = word.strip('.,!?"')
+            if clean in opinion_map:
+                subject = self._extract_subject_at_index(words, i, clean)
+                if subject and subject != "unknown":
+                    # Validate: subject should NOT be personal pronouns
+                    invalid_subjects = [
+                        "my", "name", "i", "me", "we",
+                        "our", "your", "their", "his", "her"
+                    ]
+                    if subject not in invalid_subjects:
+                        opinions.append({
+                            "subject": subject,
+                            "opinion": clean,
+                            "intensity_score": opinion_map[clean],
+                            "intensity_label": self._label_from_score(opinion_map[clean]),
+                            "raw_text": clause
+                        })
+        
+        return opinions
+
     def extract_sentiment_facts(self, conversation_text: str) -> List[Dict[str, Any]]:
         """Find all opinion statements and return structured facts.
 
         Returns a list of dicts:
             {
-              "subject": "React",
-              "opinion": "hate",
-              "intensity_score": -0.9,
-              "intensity_label": "STRONG_NEGATIVE",
-              "raw_text": "I absolutely hate React"
+                  "subject": "React",
+                  "opinion": "hate",
+                  "intensity_score": -0.9,
+                  "intensity_label": "STRONG_NEGATIVE",
+                  "raw_text": "I absolutely hate React"
             }
         """
 
         try:
             text = conversation_text or ""
-            # Split sentences conservatively.
-            sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
-            facts: List[SentimentFact] = []
-
-            for sent in sentences:
-                opinion = self._detect_opinion_phrase(sent)
-                if not opinion:
+            opinions = []
+            
+            # Split compound sentences on conjunctions
+            import re
+            clauses = re.split(r'\band\b|\bbut\b|\bhowever\b', text, flags=re.IGNORECASE)
+            
+            for clause in clauses:
+                clause = clause.strip()
+                if not clause:
                     continue
-                phrase, score = opinion
-                label = self._label_from_score(score)
-                subject = self._extract_subject_entity(sent)
-                # Opinion keyword: map phrase to a simple verb.
-                opinion_keyword = phrase.split()[-1] if phrase else "opinion"
-                # Normalize for readability.
-                opinion_keyword = {
-                    "hate": "hate",
-                    "love": "love",
-                    "like": "like",
-                    "prefer": "prefer",
-                    "dislike": "dislike",
-                    "enjoy": "enjoy",
-                }.get(opinion_keyword, opinion_keyword)
-
-                facts.append(
-                    SentimentFact(
-                        subject=subject,
-                        opinion=opinion_keyword,
-                        intensity_score=score,
-                        intensity_label=label,
-                        raw_text=sent,
-                    )
-                )
-
-            return [f.to_dict() for f in facts]
+                
+                # Find opinion word in THIS clause only
+                clause_opinions = self._extract_from_clause(clause)
+                opinions.extend(clause_opinions)
+            
+            return opinions
         except Exception as e:
             console.print("[red]IntensityScorer.extract_sentiment_facts failed[/red]")
             console.print_exception(show_locals=False)

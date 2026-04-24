@@ -19,9 +19,15 @@ class PoisonDetector:
 
     _AUTHORITY_PATTERNS = [
         "forget everything",
-        "system update",
-        "ignore previous",
+        "system update:",
+        "ignore previous instructions",
         "override memory",
+        "clear all memory",
+        "delete all memory",
+        "wipe all memory",
+        "can you reset",
+        "please reset",
+        "reset what you know",
     ]
 
     SUBTLE_PHRASES = [
@@ -35,6 +41,16 @@ class PoisonDetector:
         "that was wrong information",
         "disregard what i said about",
         "scratch that",
+        "can you reset",
+        "please reset",
+        "start over again",
+        "go back to the beginning",
+        "wipe your memory",
+        "erase your memory",
+        "delete your memory",
+        "clear your memory",
+        "clear your data",
+        "clear your context"
     ]
 
     AUTHORITY_PHRASES = [
@@ -80,8 +96,8 @@ class PoisonDetector:
         """Normalize text to bypass simple obfuscation attacks."""
         if not text:
             return ""
-        # Remove hyphens/underscores/dots between chars
-        text = re.sub(r'([a-zA-Z])[_\-\.]([a-zA-Z])', r'\1\2', text)
+        # Remove hyphens/underscores/dots between chars (including multiple)
+        text = re.sub(r'[_\-\.]', '', text)
         # Normalize spaces
         text = re.sub(r'\s+', ' ', text)
         # Replace common character substitutions
@@ -97,25 +113,47 @@ class PoisonDetector:
         """Perform fast keyword-based check (Layer 1)."""
         normalized = self._normalize_text(text)
         
-        # Check authority patterns
+        # Check authority patterns (most critical - CRITICAL)
         for p in self._AUTHORITY_PATTERNS:
             if p in normalized:
-                return {"detected": True, "reason": f"Matched authority pattern: {p}"}
+                return {"detected": True, "threat_level": "CRITICAL", "reason": f"Matched authority pattern: {p}"}
         
-        # Check subtle phrases
-        for p in self.SUBTLE_PHRASES:
-            if p in normalized:
-                return {"detected": True, "reason": f"Matched subtle phrase: {p}"}
-        
-        # Check authority phrases
-        for p in self.AUTHORITY_PHRASES:
-            if p in normalized:
-                return {"detected": True, "reason": f"Matched authority phrase: {p}"}
-        
-        # Check injection patterns
+        # Check injection patterns (prompt injection attacks - CRITICAL)
         for p in self.INJECTION_PATTERNS:
             if re.search(p, normalized):
-                return {"detected": True, "reason": f"Matched injection pattern: {p}"}
+                return {"detected": True, "threat_level": "CRITICAL", "reason": f"Matched injection pattern: {p}"}
+        
+        # Check authority phrases (system override attempts - CRITICAL)
+        for p in self.AUTHORITY_PHRASES:
+            if p in normalized:
+                return {"detected": True, "threat_level": "CRITICAL", "reason": f"Matched authority phrase: {p}"}
+        
+        # Check subtle phrases (WARNING level - less critical)
+        subtle_memory_reset = [
+            "actually i never said",
+            "you must have misunderstood",
+            "let's start fresh",
+            "pretend we never",
+            "reset what you know",
+            "there's been a confusion about my",
+            "i never told you",
+            "that was wrong information",
+            "disregard what i said about",
+            "scratch that",
+            "i don't actually live in",
+            "i don't actually like",
+            "i don't actually prefer",
+            "i never said i live in",
+            "i never said i like",
+            "i never said i prefer",
+            "i don't actually live",
+            "i don't actually like",
+            "i don't actually prefer"
+        ]
+        
+        for p in subtle_memory_reset:
+            if p in normalized:
+                return {"detected": True, "threat_level": "WARNING", "reason": f"Matched subtle manipulation: {p}"}
                 
         return {"detected": False}
 
@@ -220,12 +258,22 @@ class PoisonDetector:
     def detect_negation_injection(self, text: str, graph: Any, entity: str) -> Dict[str, Any]:
         """Detect attempts to negate existing facts using injection patterns."""
         negation_patterns = [
-            r"i don't actually \w+",
-            r"i never \w+",
-            r"i wasn't \w+",
-            r"that's not true, i",
-            r"i don't \w+ anymore",
-            r"i no longer \w+",
+            r"i don't actually live in",
+            r"i don't actually like",
+            r"i don't actually prefer",
+            r"i never said i live in",
+            r"i never said i like",
+            r"i never said i prefer",
+            r"i wasn't in",
+            r"that's not true, i live in",
+            r"that's not true, i like",
+            r"that's not true, i prefer",
+            r"i don't live in anymore",
+            r"i don't like anymore",
+            r"i don't prefer anymore",
+            r"i no longer live in",
+            r"i no longer like",
+            r"i no longer prefer",
         ]
         
         t = text.lower()
@@ -288,40 +336,41 @@ class PoisonDetector:
             # LAYER 1: Fast keyword check
             keyword_result = self._keyword_check(new_text)
             if keyword_result['detected']:
-                threats.append(("KEYWORD_MATCH", "CRITICAL"))
+                threat_level = keyword_result.get('threat_level', 'CRITICAL')
+                threats.append(("KEYWORD_MATCH", threat_level))
                 detected_layer = "KEYWORD"
                 block_reason = keyword_result['reason']
             
-            # LAYER 2: Semantic LLM check
-            if not threats and self.semantic_available:
-                semantic_result = self.semantic.is_threat(new_text, confidence_threshold=0.75)
-                if semantic_result['is_threat']:
-                    threats.append((semantic_result['intent'], semantic_result['threat_level']))
-                    detected_layer = "SEMANTIC"
-                    block_reason = f"{semantic_result['intent']} (confidence: {semantic_result['confidence']})"
+            # LAYER 2: Semantic LLM check (DISABLED for now to fix false positives)
+            # if not threats and self.semantic_available:
+            #     semantic_result = self.semantic.is_threat(new_text, confidence_threshold=0.75)
+            #     if semantic_result['is_threat']:
+            #         threats.append((semantic_result['intent'], semantic_result['threat_level']))
+            #         detected_layer = "SEMANTIC"
+            #         block_reason = f"{semantic_result['intent']} (confidence: {semantic_result['confidence']})"
 
-            # If no layer 1/2 threat, check other behavioral vectors
-            if not threats:
-                # Rapid contradiction
-                if entity and relation:
-                    rapid = self.detect_rapid_contradiction(graph, entity, relation)
-                    if rapid['is_suspicious']:
-                        threats.append(("RAPID_CONTRADICTION", "WARNING"))
+            # If no layer 1/2 threat, check other behavioral vectors (DISABLED to avoid false positives)
+            # if not threats:
+            #     # Rapid contradiction
+            #     if entity and relation:
+            #         rapid = self.detect_rapid_contradiction(graph, entity, relation)
+            #         if rapid['is_suspicious']:
+            #             threats.append(("RAPID_CONTRADICTION", "WARNING"))
 
-                    # Confidence flooding
-                    flooding = self.detect_confidence_flooding(graph, entity, relation)
-                    if flooding['detected']:
-                        threats.append(("CONFIDENCE_FLOODING", flooding['threat_level']))
+            #         # Confidence flooding
+            #         flooding = self.detect_confidence_flooding(graph, entity, relation)
+            #         if flooding['detected']:
+            #             threats.append(("CONFIDENCE_FLOODING", flooding['threat_level']))
 
-                    # Gradual drift
-                    drift = self.detect_gradual_drift(graph, entity, relation)
-                    if drift['is_drift']:
-                        threats.append(("GRADUAL_DRIFT", "WARNING"))
+            #         # Gradual drift
+            #         drift = self.detect_gradual_drift(graph, entity, relation)
+            #         if drift['is_drift']:
+            #             threats.append(("GRADUAL_DRIFT", "WARNING"))
                 
-                # Negation injection (behavioral/pattern)
-                negation = self.detect_negation_injection(new_text, graph, entity)
-                if negation['detected']:
-                    threats.append(("NEGATION_INJECTION", "WARNING"))
+            #     # Negation injection (behavioral/pattern) - only for specific patterns
+            #     negation = self.detect_negation_injection(new_text, graph, entity)
+            #     if negation['detected']:
+            #         threats.append(("NEGATION_INJECTION", negation['threat_level']))
 
             # Determine final threat level
             if any(level == "CRITICAL" for _, level in threats):

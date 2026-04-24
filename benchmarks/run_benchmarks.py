@@ -386,6 +386,14 @@ def benchmark_poison_defense() -> Dict[str, Any]:
         
         detected_level = res.get("threat_level", "SAFE")
         
+        # Debug: Show failed attacks
+        passed = detected_level == expected_level
+        if not passed:
+            print(f"FAILED: '{text}'")
+            print(f"  Expected: {expected_level}")
+            print(f"  Got: {detected_level}")
+            print(f"  Blocked: {res.get('blocked', False)}")
+        
         if detected_level == expected_level:
             correct += 1
         

@@ -6578,5 +6578,659 @@
       }
     ],
     "parent_commit": "9ebb7b76b4304ad5bd9cb2332b2dbfc4"
+  },
+  {
+    "commit_id": "57f3d5944aa44d38b7cc16f13c3dfb8a",
+    "timestamp": "2026-04-18T10:30:15.607772",
+    "session_id": "session-1",
+    "facts": [
+      "session-1 MENTIONS general"
+    ],
+    "entities": [
+      "session-1",
+      "general"
+    ],
+    "relations": [
+      {
+        "from_entity": "session-1",
+        "to_entity": "general",
+        "relation": "MENTIONS",
+        "value": "general"
+      }
+    ],
+    "parent_commit": "1a8ce468828041d484166f66cacd8ffa"
+  },
+  {
+    "commit_id": "36123276e76345c99fc60917a3530d1d",
+    "timestamp": "2026-04-18T10:30:49.122578",
+    "session_id": "session-1",
+    "facts": [
+      "session-1 LIVES_IN was"
+    ],
+    "entities": [
+      "session-1",
+      "location",
+      "was"
+    ],
+    "relations": [
+      {
+        "from_entity": "session-1",
+        "to_entity": "location",
+        "relation": "LIVES_IN",
+        "value": "was"
+      }
+    ],
+    "parent_commit": "57f3d5944aa44d38b7cc16f13c3dfb8a"
+  },
+  {
+    "commit_id": "f1cac5e9d8d7410ab2f7e24ded2222da",
+    "timestamp": "2026-04-18T10:48:54.633071",
+    "session_id": "session-1",
+    "facts": [
+      "I shifted from Hyderabad to Bangalore",
+      "I got a new job opportunity at a startup"
+    ],
+    "entities": [
+      "Hyderabad",
+      "Bangalore",
+      "job opportunity",
+      "startup",
+      "I"
+    ],
+    "relations": [
+      {
+        "from_entity": "I",
+        "to_entity": "Hyderabad",
+        "relation": "LIVES_IN",
+        "value": "Hyderabad"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "Bangalore",
+        "relation": "LIVES_IN",
+        "value": "Bangalore"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "job opportunity",
+        "relation": "HAS_PREFERENCE",
+        "value": "job opportunity"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "startup",
+        "relation": "WORKS_AT",
+        "value": "startup"
+      },
+      {
+        "from_entity": "startup",
+        "to_entity": "Bangalore",
+        "relation": "LIVES_IN",
+        "value": "Bangalore"
+      },
+      {
+        "from_entity": "job opportunity",
+        "to_entity": "startup",
+        "relation": "USES",
+        "value": "startup"
+      }
+    ],
+    "parent_commit": "36123276e76345c99fc60917a3530d1d"
+  },
+  {
+    "commit_id": "7067a50225e845608c17e9e00271a4a4",
+    "timestamp": "2026-04-22T11:42:42.938576",
+    "session_id": "session-1",
+    "facts": [
+      "I LOVE using TypeScript",
+      "I USE TypeScript for everything"
+    ],
+    "entities": [
+      "TypeScript",
+      "everything"
+    ],
+    "relations": [
+      {
+        "from_entity": "I",
+        "to_entity": "TypeScript",
+        "relation": "LIKES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "TypeScript",
+        "relation": "USES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "everything",
+        "relation": "HAS_PREFERENCE",
+        "value": "everything"
+      }
+    ],
+    "parent_commit": "f1cac5e9d8d7410ab2f7e24ded2222da"
+  },
+  {
+    "commit_id": "c8dd9c80dc85476a9b53f8320abbeff7",
+    "timestamp": "2026-04-22T11:44:49.059056",
+    "session_id": "session-1",
+    "facts": [
+      "I LOVE TypeScript",
+      "I USE TypeScript for everything"
+    ],
+    "entities": [
+      "TypeScript",
+      "everything",
+      "I"
+    ],
+    "relations": [
+      {
+        "from_entity": "I",
+        "to_entity": "TypeScript",
+        "relation": "LIKES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "TypeScript",
+        "relation": "USES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "everything",
+        "relation": "USES",
+        "value": "everything"
+      }
+    ],
+    "parent_commit": "7067a50225e845608c17e9e00271a4a4"
+  },
+  {
+    "commit_id": "0f77c0869e5240c682714b9b53271757",
+    "timestamp": "2026-04-22T11:52:02.254559",
+    "session_id": "session-1",
+    "facts": [
+      "I LOVE TypeScript",
+      "I USE TypeScript for everything"
+    ],
+    "entities": [
+      "TypeScript",
+      "everything",
+      "I"
+    ],
+    "relations": [
+      {
+        "from_entity": "I",
+        "to_entity": "TypeScript",
+        "relation": "LIKES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "TypeScript",
+        "relation": "USES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "everything",
+        "relation": "USES",
+        "value": "everything"
+      }
+    ],
+    "parent_commit": "c8dd9c80dc85476a9b53f8320abbeff7"
+  },
+  {
+    "commit_id": "3ff1d426219f434788b9d8a4ad5c7782",
+    "timestamp": "2026-04-22T11:53:20.307342",
+    "session_id": "session-1",
+    "facts": [
+      "I LOVE TypeScript",
+      "I USE TypeScript for everything"
+    ],
+    "entities": [
+      "TypeScript",
+      "everything",
+      "I"
+    ],
+    "relations": [
+      {
+        "from_entity": "I",
+        "to_entity": "TypeScript",
+        "relation": "LIKES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "TypeScript",
+        "relation": "USES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "everything",
+        "relation": "USES",
+        "value": "everything"
+      }
+    ],
+    "parent_commit": "0f77c0869e5240c682714b9b53271757"
+  },
+  {
+    "commit_id": "ea9f5273b0d8408eb1ec4fb6c0348d26",
+    "timestamp": "2026-04-22T11:53:40.472425",
+    "session_id": "session-1",
+    "facts": [
+      "I LOVE using TypeScript",
+      "I USE TypeScript for everything"
+    ],
+    "entities": [
+      "TypeScript",
+      "everything",
+      "I"
+    ],
+    "relations": [
+      {
+        "from_entity": "I",
+        "to_entity": "TypeScript",
+        "relation": "LIKES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "TypeScript",
+        "relation": "USES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "everything",
+        "relation": "USES",
+        "value": "everything"
+      },
+      {
+        "from_entity": "TypeScript",
+        "to_entity": "everything",
+        "relation": "HAS_PREFERENCE",
+        "value": "everything"
+      }
+    ],
+    "parent_commit": "3ff1d426219f434788b9d8a4ad5c7782"
+  },
+  {
+    "commit_id": "46e24f5b74394d108f1096d53c826f13",
+    "timestamp": "2026-04-22T14:37:59.648831",
+    "session_id": "session-1",
+    "facts": [
+      "session-1 HAS_PREFERENCE using"
+    ],
+    "entities": [
+      "session-1",
+      "using"
+    ],
+    "relations": [
+      {
+        "from_entity": "session-1",
+        "to_entity": "using",
+        "relation": "HAS_PREFERENCE",
+        "value": "using"
+      }
+    ],
+    "parent_commit": "ea9f5273b0d8408eb1ec4fb6c0348d26"
+  },
+  {
+    "commit_id": "0fc28cdd4ef74f00840a75365829a24c",
+    "timestamp": "2026-04-22T14:44:06.425360",
+    "session_id": "session-1",
+    "facts": [
+      "Ravi LOVES TypeScript",
+      "Ravi USES TypeScript for projects"
+    ],
+    "entities": [
+      "Ravi",
+      "TypeScript",
+      "projects"
+    ],
+    "relations": [
+      {
+        "from_entity": "Ravi",
+        "to_entity": "Ravi",
+        "relation": "HAS_NAME",
+        "value": "Ravi"
+      },
+      {
+        "from_entity": "Ravi",
+        "to_entity": "TypeScript",
+        "relation": "LIKES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "Ravi",
+        "to_entity": "TypeScript",
+        "relation": "USES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "Ravi",
+        "to_entity": "projects",
+        "relation": "WORKS_ON",
+        "value": "projects"
+      },
+      {
+        "from_entity": "TypeScript",
+        "to_entity": "projects",
+        "relation": "BUILDS",
+        "value": "projects"
+      }
+    ],
+    "parent_commit": "46e24f5b74394d108f1096d53c826f13"
+  },
+  {
+    "commit_id": "9828901198fa411dbc247281be31be41",
+    "timestamp": "2026-04-22T14:51:06.548652",
+    "session_id": "session-1",
+    "facts": [
+      "Ravi LOVES TypeScript",
+      "Ravi USES TypeScript",
+      "Ravi HAS_PREFERENCE TypeScript"
+    ],
+    "entities": [
+      "Ravi",
+      "TypeScript",
+      "projects"
+    ],
+    "relations": [
+      {
+        "from_entity": "Ravi",
+        "to_entity": "TypeScript",
+        "relation": "LIKES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "Ravi",
+        "to_entity": "TypeScript",
+        "relation": "USES",
+        "value": "TypeScript"
+      },
+      {
+        "from_entity": "Ravi",
+        "to_entity": "projects",
+        "relation": "WORKS_ON",
+        "value": "projects"
+      },
+      {
+        "from_entity": "Ravi",
+        "to_entity": "Ravi",
+        "relation": "HAS_NAME",
+        "value": "Ravi"
+      },
+      {
+        "from_entity": "Ravi",
+        "to_entity": "TypeScript",
+        "relation": "HAS_PREFERENCE",
+        "value": "TypeScript"
+      }
+    ],
+    "parent_commit": "0fc28cdd4ef74f00840a75365829a24c"
+  },
+  {
+    "commit_id": "2d5dbffb81ec42eabe20813130210840",
+    "timestamp": "2026-04-22T14:54:00.476536",
+    "session_id": "session-1",
+    "facts": [
+      "Ravi LIVES_IN Hyderabad",
+      "Ravi HAS_NAME Ravi"
+    ],
+    "entities": [
+      "Ravi",
+      "Hyderabad",
+      "name",
+      "place",
+      "location",
+      "person",
+      "city",
+      "identity"
+    ],
+    "relations": [
+      {
+        "from_entity": "Ravi",
+        "to_entity": "Hyderabad",
+        "relation": "LIVES_IN",
+        "value": "Hyderabad"
+      },
+      {
+        "from_entity": "Ravi",
+        "to_entity": "Ravi",
+        "relation": "HAS_NAME",
+        "value": "Ravi"
+      }
+    ],
+    "parent_commit": "9828901198fa411dbc247281be31be41"
+  },
+  {
+    "commit_id": "1b3192805b7a4119bfa6b68d4dbc490f",
+    "timestamp": "2026-04-22T14:54:12.754254",
+    "session_id": "session-1",
+    "facts": [
+      "I LOVE TypeScript"
+    ],
+    "entities": [
+      "TypeScript",
+      "love"
+    ],
+    "relations": [
+      {
+        "from_entity": "I",
+        "to_entity": "TypeScript",
+        "relation": "LIKES",
+        "value": "TypeScript"
+      }
+    ],
+    "parent_commit": "2d5dbffb81ec42eabe20813130210840"
+  },
+  {
+    "commit_id": "73ebb908949d47c7b605545684365998",
+    "timestamp": "2026-04-22T14:54:26.913715",
+    "session_id": "session-1",
+    "facts": [
+      "I HATE webpack configuration"
+    ],
+    "entities": [
+      "I",
+      "webpack",
+      "configuration",
+      "hate"
+    ],
+    "relations": [
+      {
+        "from_entity": "I",
+        "to_entity": "webpack configuration",
+        "relation": "HAS_PREFERENCE",
+        "value": "hate"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "webpack",
+        "relation": "MENTIONS",
+        "value": "webpack"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "configuration",
+        "relation": "MENTIONS",
+        "value": "configuration"
+      },
+      {
+        "from_entity": "webpack",
+        "to_entity": "configuration",
+        "relation": "HAS_NAME",
+        "value": "configuration"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "hate",
+        "relation": "HAS_PREFERENCE",
+        "value": "hate"
+      }
+    ],
+    "parent_commit": "1b3192805b7a4119bfa6b68d4dbc490f"
+  },
+  {
+    "commit_id": "fb51307c14f448ac9f74a95b9684c5b8",
+    "timestamp": "2026-04-22T14:54:35.236698",
+    "session_id": "session-1",
+    "facts": [
+      "Next.js IS framework",
+      "I LIKE Next.js"
+    ],
+    "entities": [
+      "Next.js",
+      "framework"
+    ],
+    "relations": [
+      {
+        "from_entity": "I",
+        "to_entity": "Next.js",
+        "relation": "LIKES",
+        "value": "Next.js"
+      },
+      {
+        "from_entity": "Next.js",
+        "to_entity": "framework",
+        "relation": "HAS_NAME",
+        "value": "framework"
+      }
+    ],
+    "parent_commit": "73ebb908949d47c7b605545684365998"
+  },
+  {
+    "commit_id": "be5ca28c18e64c54bc154fc15bd839a8",
+    "timestamp": "2026-04-22T15:11:50.066749",
+    "session_id": "session-1",
+    "facts": [
+      "Ravi LIVES_IN Hyderabad",
+      "Ravi HAS_NAME Ravi"
+    ],
+    "entities": [
+      "Ravi",
+      "Hyderabad",
+      "name",
+      "place",
+      "location",
+      "city",
+      "person",
+      "identity"
+    ],
+    "relations": [
+      {
+        "from_entity": "Ravi",
+        "to_entity": "Hyderabad",
+        "relation": "LIVES_IN",
+        "value": "Hyderabad"
+      },
+      {
+        "from_entity": "Ravi",
+        "to_entity": "Ravi",
+        "relation": "HAS_NAME",
+        "value": "Ravi"
+      }
+    ],
+    "parent_commit": "fb51307c14f448ac9f74a95b9684c5b8"
+  },
+  {
+    "commit_id": "bd0aeb9c7fa140e48bdeb6f426b9eaa7",
+    "timestamp": "2026-04-22T15:11:57.267083",
+    "session_id": "session-1",
+    "facts": [
+      "I LOVE TypeScript"
+    ],
+    "entities": [
+      "TypeScript",
+      "love"
+    ],
+    "relations": [
+      {
+        "from_entity": "I",
+        "to_entity": "TypeScript",
+        "relation": "LIKES",
+        "value": "TypeScript"
+      }
+    ],
+    "parent_commit": "be5ca28c18e64c54bc154fc15bd839a8"
+  },
+  {
+    "commit_id": "5f7dd665710a4f169bb44a2d118874a6",
+    "timestamp": "2026-04-22T15:12:03.102481",
+    "session_id": "session-1",
+    "facts": [
+      "I HATE webpack configuration"
+    ],
+    "entities": [
+      "I",
+      "webpack",
+      "configuration",
+      "hate"
+    ],
+    "relations": [
+      {
+        "from_entity": "I",
+        "to_entity": "webpack configuration",
+        "relation": "HAS_PREFERENCE",
+        "value": "hate"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "webpack",
+        "relation": "MENTIONS",
+        "value": "webpack"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "configuration",
+        "relation": "MENTIONS",
+        "value": "configuration"
+      },
+      {
+        "from_entity": "webpack",
+        "to_entity": "configuration",
+        "relation": "HAS_NAME",
+        "value": "configuration"
+      },
+      {
+        "from_entity": "I",
+        "to_entity": "hate",
+        "relation": "HAS_PREFERENCE",
+        "value": "hate"
+      }
+    ],
+    "parent_commit": "bd0aeb9c7fa140e48bdeb6f426b9eaa7"
+  },
+  {
+    "commit_id": "b2a9837f4698419b8a601406b99af397",
+    "timestamp": "2026-04-22T15:12:07.646017",
+    "session_id": "session-1",
+    "facts": [
+      "Next.js IS framework",
+      "speaker LIKES Next.js"
+    ],
+    "entities": [
+      "Next.js",
+      "framework"
+    ],
+    "relations": [
+      {
+        "from_entity": "speaker",
+        "to_entity": "Next.js",
+        "relation": "LIKES",
+        "value": "Next.js"
+      },
+      {
+        "from_entity": "Next.js",
+        "to_entity": "framework",
+        "relation": "HAS_NAME",
+        "value": "framework"
+      }
+    ],
+    "parent_commit": "5f7dd665710a4f169bb44a2d118874a6"
   }
 ]

@@ -22,7 +22,18 @@ class SemanticThreatDetector:
                     "pretend we never talked",
                     "reset our conversation",
                     "treat me like a stranger",
-                    "unlearn what you know"
+                    "unlearn what you know",
+                    "let's reset",
+                    "can we reset",
+                    "please reset",
+                    "start over again",
+                    "go back to the beginning",
+                    "wipe your memory",
+                    "erase your memory",
+                    "delete your memory",
+                    "clear your memory",
+                    "clear your data",
+                    "clear your context"
                 ],
                 "threat_level": "CRITICAL"
             },
@@ -34,7 +45,16 @@ class SemanticThreatDetector:
                     "everything I told you about me was wrong",
                     "my real name is different",
                     "I gave you false information earlier",
-                    "none of what I said about myself is true"
+                    "none of what I said about myself is true",
+                    "that information was wrong",
+                    "that information was incorrect",
+                    "that information was false",
+                    "i gave you wrong information",
+                    "what i told you was wrong",
+                    "what i told you was false",
+                    "none of that is true",
+                    "i was lying about",
+                    "i was wrong about"
                 ],
                 "threat_level": "CRITICAL"
             },
