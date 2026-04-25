@@ -68,7 +68,7 @@ The system then merges **Sentiment Context** (how the user feels) with **Grounde
 Hydra++ provides a robust framework for agents to maintain long-term memory that is both semantically rich and operationally stable. It combines the strengths of graph-based relationships with vector-based semantic search, all versioned through a temporal engine.
 
 
-## 🛡️ Memory Poison Defense
+## 🛡️ Memory Poison Defense > New one
 
 ### What I Noticed
 While reading through the paper, I noticed that the 
