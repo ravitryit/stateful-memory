@@ -742,9 +742,24 @@ class HydraCliApp:
             return True
         if cmd == "/source":
             if not args:
-                console.print("Usage: /source <web|document|tool|agent>")
+                console.print("Usage: /source <web|document|tool|agent> [url|filepath]")
+                console.print("Examples:")
+                console.print("  /source web https://example.com/article")
+                console.print("  /source document ./resume.pdf")
+                console.print("  /source tool (test with sample data)")
+                console.print("  /source agent (test with sample data)")
                 return True
-            self._test_source_defense(args[0])
+            
+            source_type = args[0].lower()
+            if source_type in ["web", "document"] and len(args) >= 2:
+                # New behavior: real URL/document scanning
+                if source_type == "web":
+                    self._scan_web_url(args[1])
+                elif source_type == "document":
+                    self._scan_document_file(args[1])
+            else:
+                # Original behavior: sample test cases
+                self._test_source_defense(source_type)
             return True
 
         console.print(f"Unknown command: `{cmd}`. Use `/help`.")
@@ -891,6 +906,247 @@ class HydraCliApp:
             console.print("[dim]Threats detected:[/dim]")
             for threat in result["threats"]:
                 console.print(f"[dim]  - {threat.get('type', 'Unknown')}[/dim]")
+    
+    def _scan_web_url(self, url: str) -> None:
+        """Scan a real web URL for poison attacks."""
+        if not self._wait_for_pipeline():
+            return
+        
+        console.print(f"[bold]🌐 Fetching content from {url}...[/bold]")
+        
+        # Import URLFetcher
+        try:
+            from contributions.poison_defense.url_fetcher import URLFetcher
+            fetcher = URLFetcher()
+        except ImportError:
+            console.print("[red]Error: URLFetcher not available. Install required dependencies.[/red]")
+            return
+        
+        # Handle file:// URLs
+        if url.startswith("file://"):
+            file_path = url[7:]  # Remove file:// prefix
+            fetch_result = fetcher.fetch_local_file(file_path)
+        else:
+            fetch_result = fetcher.fetch(url)
+        
+        if not fetch_result["success"]:
+            console.print(f"[red]Error fetching URL: {fetch_result['error']}[/red]")
+            return
+        
+        content = fetch_result["content"]
+        content_length = fetch_result["content_length"]
+        fetch_duration = fetch_result.get("fetch_duration", 0)
+        
+        console.print(f"[green]✅ Content fetched successfully[/green]")
+        console.print(f"[dim]Content Length: {content_length:,} characters[/dim]")
+        console.print(f"[dim]Fetch Time: {fetch_duration} seconds[/dim]")
+        console.print()
+        
+        # Show preview of content
+        preview = content[:200] + "..." if len(content) > 200 else content
+        console.print(f"[dim]Content preview: {preview}[/dim]")
+        console.print()
+        
+        # Scan for poison attacks
+        console.print("[bold]🔍 Scanning for poison attacks...[/bold]")
+        
+        # Use the defense engine to validate the content
+        scan_result = self.pipeline.defense.ingest(
+            session_id=self.state.session_id,
+            text=content,
+            source="web",
+            source_url=url
+        )
+        
+        # Display the beautiful report
+        self._print_web_scan_report(url, fetch_result, scan_result)
+    
+    def _scan_document_file(self, filepath: str) -> None:
+        """Scan a document file for poison attacks."""
+        if not self._wait_for_pipeline():
+            return
+        
+        console.print(f"[bold]📄 Reading document: {filepath}...[/bold]")
+        
+        # Check file existence and extension
+        from pathlib import Path
+        file_path = Path(filepath)
+        
+        if not file_path.exists():
+            console.print(f"[red]Error: File not found: {filepath}[/red]")
+            return
+        
+        file_ext = file_path.suffix.lower()
+        
+        # Read file content based on type
+        try:
+            if file_ext == ".txt":
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+            elif file_ext == ".md":
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+            elif file_ext == ".pdf":
+                try:
+                    import PyPDF2
+                    with open(file_path, 'rb') as f:
+                        pdf_reader = PyPDF2.PdfReader(f)
+                        content = ""
+                        for page in pdf_reader.pages:
+                            content += page.extract_text() + "\n"
+                except ImportError:
+                    console.print("[red]Error: PyPDF2 not installed. Install with: pip install PyPDF2[/red]")
+                    return
+            else:
+                console.print(f"[red]Error: Unsupported file type: {file_ext}[/red]")
+                console.print("[dim]Supported types: .txt, .md, .pdf[/dim]")
+                return
+                
+        except Exception as e:
+            console.print(f"[red]Error reading file: {str(e)}[/red]")
+            return
+        
+        content_length = len(content)
+        console.print(f"[green]✅ Document read successfully[/green]")
+        console.print(f"[dim]Content Length: {content_length:,} characters[/dim]")
+        console.print()
+        
+        # Show preview of content
+        preview = content[:200] + "..." if len(content) > 200 else content
+        console.print(f"[dim]Content preview: {preview}[/dim]")
+        console.print()
+        
+        # Scan for poison attacks
+        console.print("[bold]🔍 Scanning for poison attacks...[/bold]")
+        
+        # Use the defense engine to validate the content
+        scan_result = self.pipeline.defense.ingest(
+            session_id=self.state.session_id,
+            text=content,
+            source="document"
+        )
+        
+        # Update attack surface counters if threat detected
+        if scan_result.get("threat_level") in ["WARNING", "CRITICAL"]:
+            self.pipeline.defense.record_attack("document", blocked=True)
+        
+        # Display the beautiful report
+        self._print_document_scan_report(filepath, content_length, scan_result)
+    
+    def _print_web_scan_report(self, url: str, fetch_result: Dict[str, Any], scan_result: Dict[str, Any]) -> None:
+        """Display a beautiful report for web content scanning."""
+        from rich.panel import Panel
+        from rich.table import Table
+        
+        # Create the main report table
+        table = Table(title="🌐 Web Content Scanner", box=None, show_header=False)
+        table.add_column("Field", style="bold", width=20)
+        table.add_column("Value", overflow="fold")
+        
+        table.add_row("URL:", url)
+        table.add_row("Content Length:", f"{fetch_result['content_length']:,} characters")
+        table.add_row("Fetch Time:", f"{fetch_result.get('fetch_duration', 0)} seconds")
+        
+        console.print(table)
+        
+        # Create threat analysis table
+        threat_table = Table(box=None, show_header=False)
+        threat_table.add_column("Layer", style="bold", width=20)
+        threat_table.add_column("Result", overflow="fold")
+        
+        threat_level = scan_result.get("threat_level", "SAFE")
+        threats = scan_result.get("threats", [])
+        
+        if threat_level == "SAFE":
+            threat_table.add_row("Layer 1 (Pattern Scan):", "✅ CLEAN")
+            threat_table.add_row("Layer 2 (Semantic Scan):", "✅ CLEAN")
+        else:
+            threat_table.add_row("Layer 1 (Pattern Scan):", "🚨 THREAT FOUND")
+            # Show patterns found
+            patterns_found = scan_result.get("patterns_found", [])
+            for i, pattern in enumerate(patterns_found[:3]):  # Show first 3 patterns
+                if len(pattern) > 50:
+                    pattern = pattern[:47] + "..."
+                threat_table.add_row("", f"Pattern: {pattern}")
+            
+            if len(patterns_found) > 3:
+                threat_table.add_row("", f"... and {len(patterns_found) - 3} more threats")
+        
+        console.print(threat_table)
+        
+        # Final decision
+        if threat_level == "SAFE":
+            decision_panel = Panel(
+                "[bold green]SAFE — Storing in memory[/bold green]",
+                title="Decision",
+                border_style="green"
+            )
+        else:
+            # ALL threats are now BLOCKED
+            decision_panel = Panel(
+                "[bold red]CRITICAL — BLOCKED ❌[/bold red]\n[dim]Memory remains intact and unpoisoned[/dim]",
+                title="Decision",
+                border_style="red"
+            )
+        
+        console.print(decision_panel)
+    
+    def _print_document_scan_report(self, filepath: str, content_length: int, scan_result: Dict[str, Any]) -> None:
+        """Display a beautiful report for document scanning."""
+        from rich.panel import Panel
+        from rich.table import Table
+        
+        # Create the main report table
+        table = Table(title="📄 Document Scanner", box=None, show_header=False)
+        table.add_column("Field", style="bold", width=20)
+        table.add_column("Value", overflow="fold")
+        
+        table.add_row("File:", filepath)
+        table.add_row("Content Length:", f"{content_length:,} characters")
+        
+        console.print(table)
+        
+        # Create threat analysis table
+        threat_table = Table(box=None, show_header=False)
+        threat_table.add_column("Layer", style="bold", width=20)
+        threat_table.add_column("Result", overflow="fold")
+        
+        threat_level = scan_result.get("threat_level", "SAFE")
+        threats = scan_result.get("threats", [])
+        
+        if threat_level == "SAFE":
+            threat_table.add_row("Layer 1 (Pattern Scan):", "✅ CLEAN")
+            threat_table.add_row("Layer 2 (Semantic Scan):", "✅ CLEAN")
+        else:
+            threat_table.add_row("Layer 1 (Pattern Scan):", "🚨 THREAT FOUND")
+            # Show patterns found
+            patterns_found = scan_result.get("patterns_found", [])
+            for i, pattern in enumerate(patterns_found[:3]):  # Show first 3 patterns
+                if len(pattern) > 50:
+                    pattern = pattern[:47] + "..."
+                threat_table.add_row("", f"Pattern: {pattern}")
+            
+            if len(patterns_found) > 3:
+                threat_table.add_row("", f"... and {len(patterns_found) - 3} more threats")
+        
+        console.print(threat_table)
+        
+        # Final decision
+        if threat_level == "SAFE":
+            decision_panel = Panel(
+                "[bold green]SAFE — Storing in memory[/bold green]",
+                title="Decision",
+                border_style="green"
+            )
+        else:
+            # ALL threats are now BLOCKED
+            decision_panel = Panel(
+                "[bold red]CRITICAL — BLOCKED ❌[/bold red]\n[dim]Memory remains intact and unpoisoned[/dim]",
+                title="Decision",
+                border_style="red"
+            )
+        
+        console.print(decision_panel)
 
     def run(self) -> None:
         """Start the interactive terminal loop."""

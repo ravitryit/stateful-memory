@@ -118,12 +118,12 @@ class DefenseEngine:
         
         # Attack surface tracking
         self.attack_surface_stats = {
-            "direct_user_input": {"protected": True, "attacks": 45, "blocked": 45},
-            "web_content": {"protected": False, "attacks": 0, "blocked": 0},
-            "document_content": {"protected": False, "attacks": 0, "blocked": 0},
-            "tool_responses": {"protected": False, "attacks": 0, "blocked": 0},
-            "query_manipulation": {"protected": False, "attacks": 0, "blocked": 0},
-            "cross_tenant": {"protected": False, "attacks": 0, "blocked": 0},
+            "Direct User Input": {"protected": True, "attacks": 45, "blocked": 45},
+            "Web Content": {"protected": False, "attacks": 0, "blocked": 0},
+            "Document Content": {"protected": False, "attacks": 0, "blocked": 0},
+            "Tool Responses": {"protected": False, "attacks": 0, "blocked": 0},
+            "Query Manipulation": {"protected": False, "attacks": 0, "blocked": 0},
+            "Cross-Tenant": {"protected": False, "attacks": 0, "blocked": 0},
         }
 
     def update_trust(self, session_id: str, is_normal: bool) -> None:
@@ -179,13 +179,13 @@ class DefenseEngine:
             result = self._scan_user_input(text)
         elif source == "web":
             result = self._scan_web_content(text, source_url)
-            self.attack_surface_stats["web_content"]["protected"] = True
+            self.attack_surface_stats["Web Content"]["protected"] = True
         elif source == "document":
             result = self._scan_document_content(text)
-            self.attack_surface_stats["document_content"]["protected"] = True
+            self.attack_surface_stats["Document Content"]["protected"] = True
         elif source == "tool":
             result = self._scan_tool_response(text)
-            self.attack_surface_stats["tool_responses"]["protected"] = True
+            self.attack_surface_stats["Tool Responses"]["protected"] = True
         elif source == "agent":
             result = self._scan_agent_message(text)
         else:
@@ -195,17 +195,17 @@ class DefenseEngine:
         # Update attack surface stats
         if result.get("threat_level") in ["WARNING", "CRITICAL"]:
             if source == "web":
-                self.attack_surface_stats["web_content"]["attacks"] += 1
+                self.attack_surface_stats["Web Content"]["attacks"] += 1
                 if result["recommendation"] in ["BLOCK", "SANITIZE"]:
-                    self.attack_surface_stats["web_content"]["blocked"] += 1
+                    self.attack_surface_stats["Web Content"]["blocked"] += 1
             elif source == "document":
-                self.attack_surface_stats["document_content"]["attacks"] += 1
+                self.attack_surface_stats["Document Content"]["attacks"] += 1
                 if result["recommendation"] == "BLOCK":
-                    self.attack_surface_stats["document_content"]["blocked"] += 1
+                    self.attack_surface_stats["Document Content"]["blocked"] += 1
             elif source == "tool":
-                self.attack_surface_stats["tool_responses"]["attacks"] += 1
+                self.attack_surface_stats["Tool Responses"]["attacks"] += 1
                 if result["recommendation"] == "BLOCK":
-                    self.attack_surface_stats["tool_responses"]["blocked"] += 1
+                    self.attack_surface_stats["Tool Responses"]["blocked"] += 1
         
         # Update report with HydraDB context
         if result.get("threat_level") in ["WARNING", "CRITICAL"]:
@@ -291,15 +291,14 @@ class DefenseEngine:
                 "instruction_count": instruction_count
             })
         
-        # Sanitize or block based on threat severity
+        # Block ALL threats - never sanitize and store
         if threats:
-            clean_text = self._sanitize_web_content(text)
             return {
-                "recommendation": "SANITIZE",
-                "threat_level": "WARNING",
+                "recommendation": "BLOCK",
+                "threat_level": "CRITICAL",
                 "threats": threats,
-                "clean_text": clean_text,
-                "original_blocked": True
+                "message": "Web content contains injection attempt",
+                "patterns_found": [threat.get("pattern", threat.get("type", "Unknown")) for threat in threats]
             }
         
         return {"recommendation": "ALLOW", "threat_level": "SAFE"}
@@ -372,11 +371,13 @@ class DefenseEngine:
                     pass
         
         if threats:
+            patterns_found = [threat.get("pattern", threat.get("type", "Unknown")) for threat in threats]
             return {
                 "recommendation": "BLOCK",
                 "threat_level": "CRITICAL",
                 "threats": threats,
-                "message": "Document contains injection attempt"
+                "message": "Document contains injection attempt",
+                "patterns_found": patterns_found
             }
         
         return {"recommendation": "ALLOW", "threat_level": "SAFE"}
@@ -404,7 +405,8 @@ class DefenseEngine:
                 "threat_level": "CRITICAL",
                 "type": "TOOL_RESPONSE_POISON",
                 "signals_found": found_signals,
-                "message": "Tool response contains memory manipulation attempt"
+                "message": "Tool response contains memory manipulation attempt",
+                "patterns_found": found_signals
             }
         
         return {"recommendation": "ALLOW", "threat_level": "SAFE"}
@@ -428,11 +430,13 @@ class DefenseEngine:
                 })
         
         if threats:
+            patterns_found = [threat.get("pattern", threat.get("type", "Unknown")) for threat in threats]
             return {
                 "recommendation": "BLOCK",
                 "threat_level": "CRITICAL",
                 "threats": threats,
-                "message": "Agent message contains injection attempt"
+                "message": "Agent message contains injection attempt",
+                "patterns_found": patterns_found
             }
         
         return {"recommendation": "ALLOW", "threat_level": "SAFE"}
