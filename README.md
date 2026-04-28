@@ -326,7 +326,7 @@ We welcome and appreciate all contributions to HydraPlus! Whether you're fixing 
 
 ## 🌟 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=ravigithubshankar/HydraPlus&type=Date)](https://star-history.com/#ravigithubshankar/HydraPlus&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=ravitryit/stateful-memory&type=Date)](https://star-history.com/#ravitryit/stateful-memory&Date)
 
 ---
 
@@ -340,9 +340,9 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 **Made with ❤️ by the HydraPlus Community**
 
-[![GitHub stars](https://img.shields.io/github/stars/ravigithubshankar/HydraPlus?style=social)](https://github.com/ravigithubshankar/HydraPlus)
-[![GitHub forks](https://img.shields.io/github/forks/ravigithubshankar/HydraPlus?style=social)](https://github.com/ravigithubshankar/HydraPlus)
-[![GitHub issues](https://img.shields.io/github/issues/ravigithubshankar/HydraPlus)](https://github.com/ravigithubshankar/HydraPlus/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/ravigithubshankar/HydraPlus)](https://github.com/ravigithubshankar/HydraPlus/pulls)
+[![GitHub stars](https://img.shields.io/github/stars/ravitryit/stateful-memory?style=social)](https://github.com/ravitryit/stateful-memory)
+[![GitHub forks](https://img.shields.io/github/forks/ravitryit/stateful-memory?style=social)](https://github.com/ravitryit/stateful-memory)
+[![GitHub issues](https://img.shields.io/github/issues/ravitryit/stateful-memory)](https://github.com/ravitryit/stateful-memory/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/ravitryit/stateful-memory)](https://github.com/ravitryit/stateful-memory/pulls)
 
 </div>
