@@ -259,9 +259,7 @@ python benchmarks/run_benchmarks.py
 pytest
 ```
 
-## Architecture Diagram
 
-<img width="586" height="1568" alt="image" src="https://github.com/user-attachments/assets/608e96c9-1e6d-44d0-9e33-4987226ed433" />
 
 
 ## Performance & Validation
