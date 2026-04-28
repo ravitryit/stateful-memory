@@ -1,4 +1,4 @@
-"""HydraDB++ contributions: pruning, sentiment, and poisoning defense."""
+"""HydraPlus++ contributions: pruning, sentiment, and poisoning defense."""
 
 __all__: list[str] = []
 

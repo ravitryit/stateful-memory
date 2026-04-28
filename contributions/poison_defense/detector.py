@@ -15,7 +15,7 @@ console = Console()
 
 
 class PoisonDetector:
-    """Detect poisoning attempts in HydraDB++."""
+    """Detect poisoning attempts in HydraPlus++."""
 
     _AUTHORITY_PATTERNS = [
         "forget everything",

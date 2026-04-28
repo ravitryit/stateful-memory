@@ -422,7 +422,7 @@ def main() -> None:
 
     results: Dict[str, Any] = {}
 
-    console.rule("[bold]HydraDB++ Benchmarks[/bold]")
+    console.rule("[bold]HydraPlus++ Benchmarks[/bold]")
 
     console.print("[bold]Running BENCHMARK 1: Graph Pruning...[/bold]")
     b1 = benchmark_graph_pruning()
@@ -443,7 +443,7 @@ def main() -> None:
     out_path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
 
     # Beautiful terminal tables
-    table = Table(title="HydraDB++ Benchmark Summary", box=None)
+    table = Table(title="HydraPlus++ Benchmark Summary", box=None)
     table.add_column("Benchmark", style="bold")
     table.add_column("Key Metric", style="cyan")
     table.add_column("Result", style="magenta")

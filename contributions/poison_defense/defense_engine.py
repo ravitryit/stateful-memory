@@ -145,7 +145,7 @@ class DefenseEngine:
         return 1.0
 
     def ingest(self, session_id: str, text: str, source: str = "user", source_url: Optional[str] = None, source_type: Optional[str] = None, tenant_id: Optional[str] = None, sub_tenant_id: Optional[str] = None) -> Dict[str, Any]:
-        """HydraDB++ memory ingestion with comprehensive poison defense.
+        """HydraPlus++ memory ingestion with comprehensive poison defense.
         
         Args:
             session_id: Unique session identifier
@@ -153,8 +153,8 @@ class DefenseEngine:
             source: Source type - "user", "web", "document", "tool", "agent"
             source_url: URL for web content (optional)
             source_type: Additional source metadata (optional)
-            tenant_id: HydraDB tenant identifier
-            sub_tenant_id: HydraDB sub-tenant identifier
+            tenant_id: HydraPlus tenant identifier
+            sub_tenant_id: HydraPlus sub-tenant identifier
             
         Returns:
             Dict with recommendation, threat_level, and clean_text if sanitized
@@ -207,7 +207,7 @@ class DefenseEngine:
                 if result["recommendation"] == "BLOCK":
                     self.attack_surface_stats["Tool Responses"]["blocked"] += 1
         
-        # Update report with HydraDB context
+        # Update report with HydraPlus context
         if result.get("threat_level") in ["WARNING", "CRITICAL"]:
             self._report.tenant_id = tenant_id
             self._report.sub_tenant_id = sub_tenant_id
@@ -555,7 +555,7 @@ class DefenseEngine:
         return {
             "attack_surface": surface,
             "memory_integrity": "FULLY PROTECTED",
-            "hydradb_context_layer": "SECURE"
+            "hydraplus_context_layer": "SECURE"
         }
     
     def validate_before_store(self, graph: Any, new_fact: Any, entity: str, relation: str, session_id: Optional[str] = None) -> Dict[str, Any]:

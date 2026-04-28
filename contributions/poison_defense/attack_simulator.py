@@ -19,7 +19,7 @@ def _iso_now() -> str:
 
 
 class AttackSimulator:
-    """Simulate poisoning attacks against the HydraDB++ knowledge graph."""
+    """Simulate poisoning attacks against the Hydraplus++ knowledge graph."""
 
     def simulate_rapid_contradiction(
         self,

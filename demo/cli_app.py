@@ -31,7 +31,7 @@ PROJECT_PARENT = PACKAGE_ROOT.parent
 if str(PACKAGE_ROOT) not in sys.path:
     sys.path.insert(0, str(PACKAGE_ROOT))
 
-from pipeline.unified_pipeline import HydraDBPlusPlus
+from pipeline.unified_pipeline import HydraPlus
 from benchmarks.run_benchmarks import (
     benchmark_graph_pruning,
     benchmark_graph_pruning_scale,
@@ -51,7 +51,7 @@ class CliState:
 
 
 class HydraCliApp:
-    """Rich-based terminal app for HydraDB++.
+    """Rich-based terminal app for HydraPlus.
 
     The interaction style is intentionally chat-oriented:
     - normal text => ingested as conversation memory
@@ -63,7 +63,7 @@ class HydraCliApp:
 
         load_dotenv()
         self.state = CliState()
-        self.pipeline: Optional[HydraDBPlusPlus] = None
+        self.pipeline: Optional[HydraPlus] = None
         self._pipeline_ready = threading.Event()
         self._pipeline_error: Optional[Exception] = None
 
@@ -74,7 +74,7 @@ class HydraCliApp:
     def _init_pipeline_bg(self) -> None:
         """Initialize the pipeline in a background thread."""
         try:
-            self.pipeline = HydraDBPlusPlus()
+            self.pipeline = HydraPlus()
         except Exception as exc:  # noqa: BLE001
             self._pipeline_error = exc
         finally:
@@ -94,7 +94,7 @@ class HydraCliApp:
         """Render the CLI welcome screen."""
 
         panel = Panel.fit(
-            "[bold]HydraDB++ CLI[/bold]\n"
+            "[bold]HydraPlus CLI[/bold]\n"
             "workflow for memory ingestion, querying, graph inspection, and benchmarks.\n\n"
             "[yellow]IMPORTANT: Set your API key before testing:[/yellow]\n"
             "   [cyan]/setkey <provider name> <your api key here>[/cyan]\n\n"
@@ -118,7 +118,7 @@ class HydraCliApp:
             "[cyan]/source <web|document|tool|agent>[/cyan]: test specific source defense\n"
             "[cyan]/help[/cyan]: show help\n"
             "[cyan]/exit[/cyan]: quit",
-            title="HydraDB++",
+            title="HydraPlus",
         )
         console.print(Align.center(panel, vertical="middle", height=console.size.height))
 
@@ -176,7 +176,7 @@ class HydraCliApp:
         memory_stats = self.pipeline.memory.get_stats()
         defense_stats = self.pipeline.defense.get_defense_report()
 
-        table = Table(title="HydraDB++ Runtime Stats", box=None)
+        table = Table(title="HydraPlus Runtime Stats", box=None)
         table.add_column("Area", style="bold")
         table.add_column("Metric")
         table.add_column("Value")
@@ -776,7 +776,7 @@ class HydraCliApp:
             attack_surface = defense_status["attack_surface"]
             
             # Create attack surface table
-            surface_table = Table(title="HydraDB Memory Attack Surface", box=None)
+            surface_table = Table(title="HydraPlus Memory Attack Surface", box=None)
             surface_table.add_column("Injection Point", style="bold")
             surface_table.add_column("Protected", justify="center")
             surface_table.add_column("Attacks", justify="center")
@@ -808,7 +808,7 @@ class HydraCliApp:
             
             # Summary status
             memory_integrity = defense_status["memory_integrity"]
-            context_layer = defense_status["hydradb_context_layer"]
+            context_layer = defense_status["hydraplus_context_layer"]
             
             summary_panel = Panel(
                 f"[bold green]{memory_integrity} :shield:[/bold green]\n"

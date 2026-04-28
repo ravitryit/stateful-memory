@@ -1,5 +1,5 @@
 """
-URL Fetcher for HydraDB++ Memory Poison Defense
+URL Fetcher for HydraPlus++ Memory Poison Defense
 
 Fetches and extracts clean text content from web URLs for poison scanning.
 """

@@ -1,4 +1,4 @@
-"""Core building blocks for HydraDB++."""
+"""Core building blocks for Hydraplus++."""
 
 __all__ = [
     "KnowledgeGraph",

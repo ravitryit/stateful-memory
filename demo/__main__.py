@@ -1,4 +1,4 @@
-"""Module entrypoint for the HydraDB++ terminal CLI."""
+"""Module entrypoint for the Hydraplus++ terminal CLI."""
 
 from .cli_app import main
 

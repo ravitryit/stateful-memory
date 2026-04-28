@@ -73,8 +73,8 @@ class IngestionReport:
         }
 
 
-class HydraDBPlusPlus:
-    """HydraDBPlusPlus unified memory pipeline.
+class HydraPlus:
+    """HydraPlus unified memory pipeline.
 
     Combines:
     - KnowledgeGraph
@@ -453,7 +453,7 @@ class HydraDBPlusPlus:
 
             return report_dict
         except Exception as e:
-            console.print("[red]HydraDBPlusPlus.ingest failed[/red]")
+            console.print("[red]HydraPlus.ingest failed[/red]")
             console.print_exception(show_locals=False)
             raise e
 
@@ -874,7 +874,7 @@ class HydraDBPlusPlus:
                 "sentiment_context_used": sentiment_context_used,
             }
         except Exception as e:
-            console.print("[red]HydraDBPlusPlus.query failed[/red]")
+            console.print("[red]HydraPlus.query failed[/red]")
             console.print_exception(show_locals=False)
             raise e
 

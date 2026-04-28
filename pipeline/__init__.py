@@ -1,6 +1,6 @@
-"""Pipeline orchestration for HydraDB++."""
+"""Pipeline orchestration for HydraPlus++."""
 
-from .unified_pipeline import HydraDBPlusPlus
+from .unified_pipeline import HydraPlus
 
-__all__ = ["HydraDBPlusPlus"]
+__all__ = ["HydraPlus"]
 
